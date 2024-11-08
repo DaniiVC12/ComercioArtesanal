@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import Layout from "./../../components/Layout/Layout";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import "../../styles/AuthStyles.css";
@@ -15,31 +14,18 @@ const Register = () => {
 
   const navigate = useNavigate();
 
-  const HUNTER_API_KEY = "b5ff43a3502551a4b2cb75f4850d5e2f7930a5d1"; // Aquí va tu API Key de Hunter.io
-
-  // Función para validar el correo con Hunter API
-  const validateEmail = async (email) => {
-    try {
-      const response = await axios.get(`https://api.hunter.io/v2/email-verifier`, {
-        params: {
-          email: email,
-          api_key: HUNTER_API_KEY,
-        },
-      });
-      return response.data.data.result === "deliverable"; // Verifica si el correo es válido
-    } catch (error) {
-      console.error("Error al verificar el correo: ", error);
-      return false; // Si la API falla, tratamos el correo como inválido
-    }
+  // Validación básica del formato del correo electrónico
+  const isValidEmailFormat = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validación del correo electrónico
-    const isValid = await validateEmail(email);
-    if (!isValid) {
-      toast.error("El correo electrónico no es válido o no se puede verificar.");
+    // Validación del formato del correo electrónico
+    if (!isValidEmailFormat(email)) {
+      toast.error("El formato del correo electrónico no es válido.");
       return;
     }
 
@@ -50,19 +36,27 @@ const Register = () => {
     }
 
     try {
-      const res = await axios.post("http://localhost:5000/api/v1/auth/register", {
-        name,
-        email,
-        password,
-        phone,
-        address,
-        answer,
+      const res = await fetch("http://localhost:5000/api/v1/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name,
+          email,
+          password,
+          phone,
+          address,
+          answer,
+        }),
       });
-      if (res && res.data.success) {
-        toast.success(res.data.message);
+
+      const data = await res.json();
+      if (res.ok && data.success) {
+        toast.success(data.message);
         navigate("/login");
       } else {
-        toast.error(res.data.message);
+        toast.error(data.message || "Error en el registro");
       }
     } catch (error) {
       console.log(error);
@@ -94,7 +88,7 @@ const Register = () => {
               onChange={(e) => setEmail(e.target.value)}
               className="form-control"
               id="inputEmail"
-              placeholder="Correo Electronico:"
+              placeholder="Correo Electrónico:"
               required
             />
           </div>
@@ -116,7 +110,7 @@ const Register = () => {
               onChange={(e) => setPhone(e.target.value)}
               className="form-control"
               id="inputPhone"
-              placeholder="Numero de Telefono:"
+              placeholder="Número de Teléfono:"
               required
             />
           </div>
@@ -127,7 +121,7 @@ const Register = () => {
               onChange={(e) => setAddress(e.target.value)}
               className="form-control"
               id="inputAddress"
-              placeholder="Direccion:"
+              placeholder="Dirección:"
               required
             />
           </div>
