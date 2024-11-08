@@ -16,7 +16,7 @@ const Register = () => {
 
   // Validar el formato del correo electrónico usando una expresión regular
   const isValidEmailFormat = (email) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$;
     return emailRegex.test(email);
   };
 
