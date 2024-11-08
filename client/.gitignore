@@ -8,9 +8,12 @@
 # testing
 /coverage
 
+<<<<<<< HEAD
 # production
 
 
+=======
+>>>>>>> ac02cc8 (dani)
 # misc
 .DS_Store
 .env.local
