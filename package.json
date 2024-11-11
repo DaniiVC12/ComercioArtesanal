@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "start": "node server.js",
-    "build": "cd client && npm install && npm run build",
+    "build": "cd client && npm install && npm run build && npm run start",
     "rebuild": "npm rebuild bcrypt --build-from-source"
   },
   "dependencies": {
