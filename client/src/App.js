@@ -10,7 +10,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import Login from "./pages/Auth/Login";
 import Dashboard from './pages/user/Dashboard';
 import PrivateRoute from './components/Layout/Routes/Private';
-import ForgotPasss4word from './pages/Auth/ForgotPassword';
+import ForgotPasssword from './pages/Auth/ForgotPassword';
 import AdminRoute from './components/Layout/Routes/AdminRoute';
 import AdminDashboard from './pages/Admin/AdminDashboard';
 
