@@ -1,39 +1,39 @@
-import productoModel from "../models/productModel.js";
+import productModel from "../models/productModel.js";
 import fs from "fs";
 import slugify from "slugify";
 
 export const createProductController = async (req, res) => {
   try {
-    const { nombre, descripcion, precio, categoria, cantidad, envio } =
+    const { name, description, price, category, quantity, shipping } =
       req.fields;
-    const { imagen } = req.files;
+    const { photo } = req.files;
     //alidation
     switch (true) {
-      case !nombre:
-        return res.status(500).send({ error: "Escriba un nombre" });
-      case !descripcion:
-        return res.status(500).send({ error: "Escriba una descripción" });
-      case !precio:
-        return res.status(500).send({ error: "Escriba un precio" });
-      case !categoria:
-        return res.status(500).send({ error: "Escriba la categoria" });
-      case !cantidad:
-        return res.status(500).send({ error: "Escriba la cantidad" });
-      case imagen && imagen.size > 1000000:
+      case !name:
+        return res.status(500).send({ error: "Name is Required" });
+      case !description:
+        return res.status(500).send({ error: "Description is Required" });
+      case !price:
+        return res.status(500).send({ error: "Price is Required" });
+      case !category:
+        return res.status(500).send({ error: "Category is Required" });
+      case !quantity:
+        return res.status(500).send({ error: "Quantity is Required" });
+      case photo && photo.size > 1000000:
         return res
           .status(500)
-          .send({ error: "La fotografía debe pesar menos de un megabyte" });
+          .send({ error: "photo is Required and should be less then 1mb" });
     }
 
-    const products = new productoModel({ ...req.fields, slug: slugify(nombre) });
-    if (imagen) {
-      products.imagen.data = fs.readFileSync(imagen.path);
-      products.imagen.contentType = imagen.type;
+    const products = new productModel({ ...req.fields, slug: slugify(name) });
+    if (photo) {
+      products.photo.data = fs.readFileSync(photo.path);
+      products.photo.contentType = photo.type;
     }
     await products.save();
     res.status(201).send({
       success: true,
-      message: "Producto registrado exitosamente",
+      message: "Product Created Successfully",
       products,
     });
   } catch (error) {
@@ -41,7 +41,7 @@ export const createProductController = async (req, res) => {
     res.status(500).send({
       success: false,
       error,
-      message: "Error al registrar el producto",
+      message: "Error in crearing product",
     });
   }
 };
@@ -49,10 +49,10 @@ export const createProductController = async (req, res) => {
 //get all products
 export const getProductController = async (req, res) => {
   try {
-    const products = await productoModel
+    const products = await productModel
       .find({})
-      .populate("categoria")
-      .select("-imagen")
+      .populate("category")
+      .select("-photo")
       .limit(12)
       .sort({ createdAt: -1 });
     res.status(200).send({
@@ -65,7 +65,7 @@ export const getProductController = async (req, res) => {
     console.log(error);
     res.status(500).send({
       success: false,
-      message: "Error al buscar los productos",
+      message: "Erorr in getting products",
       error: error.message,
     });
   }
@@ -73,38 +73,38 @@ export const getProductController = async (req, res) => {
 // get single product
 export const getSingleProductController = async (req, res) => {
   try {
-    const product = await productoModel
+    const product = await productModel
       .findOne({ slug: req.params.slug })
-      .select("-imagen")
-      .populate("categoria");
+      .select("-photo")
+      .populate("category");
     res.status(200).send({
       success: true,
-      message: "Singular producto encontrado",
+      message: "Single Product Fetched",
       product,
     });
   } catch (error) {
     console.log(error);
     res.status(500).send({
       success: false,
-      message: "Error al buscar un solo producto",
+      message: "Eror while getitng single product",
       error,
     });
   }
 };
 
-// get imagen
+// get photo
 export const productPhotoController = async (req, res) => {
   try {
-    const product = await productoModel.findById(req.params.pid).select("imagen");
-    if (product.imagen.data) {
-      res.set("Content-type", product.imagen.contentType);
-      return res.status(200).send(product.imagen.data);
+    const product = await productModel.findById(req.params.pid).select("photo");
+    if (product.photo.data) {
+      res.set("Content-type", product.photo.contentType);
+      return res.status(200).send(product.photo.data);
     }
   } catch (error) {
     console.log(error);
     res.status(500).send({
       success: false,
-      message: "Error al buscar la foto",
+      message: "Erorr while getting photo",
       error,
     });
   }
@@ -113,16 +113,16 @@ export const productPhotoController = async (req, res) => {
 //delete controller
 export const deleteProductController = async (req, res) => {
   try {
-    await productoModel.findByIdAndDelete(req.params.pid).select("-imagen");
+    await productModel.findByIdAndDelete(req.params.pid).select("-photo");
     res.status(200).send({
       success: true,
-      message: "Producto borrado exitosamente",
+      message: "Product Deleted successfully",
     });
   } catch (error) {
     console.log(error);
     res.status(500).send({
       success: false,
-      message: "Error al borrar el producto",
+      message: "Error while deleting product",
       error,
     });
   }
@@ -131,40 +131,40 @@ export const deleteProductController = async (req, res) => {
 //upate producta
 export const updateProductController = async (req, res) => {
   try {
-    const { nombre, descripcion, precio, categoria, cantidad, envio } =
+    const { name, description, price, category, quantity, shipping } =
       req.fields;
-    const { imagen } = req.files;
+    const { photo } = req.files;
     //alidation
     switch (true) {
-      case !nombre:
-        return res.status(500).send({ error: "Escriba el nombre del producto" });
-      case !descripcion:
-        return res.status(500).send({ error: "Escriba la descripcion" });
-      case !precio:
-        return res.status(500).send({ error: "Escriba el precio" });
-      case !categoria:
-        return res.status(500).send({ error: "Escriba la categoria" });
-      case !cantidad:
-        return res.status(500).send({ error: "Escriba la cantidad" });
-      case imagen && imagen.size > 1000000:
+      case !name:
+        return res.status(500).send({ error: "Name is Required" });
+      case !description:
+        return res.status(500).send({ error: "Description is Required" });
+      case !price:
+        return res.status(500).send({ error: "Price is Required" });
+      case !category:
+        return res.status(500).send({ error: "Category is Required" });
+      case !quantity:
+        return res.status(500).send({ error: "Quantity is Required" });
+      case photo && photo.size > 1000000:
         return res
           .status(500)
-          .send({ error: "Se requiere una foto que sea menor a un megabyte" });
+          .send({ error: "photo is Required and should be less then 1mb" });
     }
 
-    const products = await productoModel.findByIdAndUpdate(
+    const products = await productModel.findByIdAndUpdate(
       req.params.pid,
-      { ...req.fields, slug: slugify(nombre) },
+      { ...req.fields, slug: slugify(name) },
       { new: true }
     );
-    if (imagen) {
-      products.imagen.data = fs.readFileSync(imagen.path);
-      products.imagen.contentType = imagen.type;
+    if (photo) {
+      products.photo.data = fs.readFileSync(photo.path);
+      products.photo.contentType = photo.type;
     }
     await products.save();
     res.status(201).send({
       success: true,
-      message: "Producto actualizado exitosamente",
+      message: "Product Updated Successfully",
       products,
     });
   } catch (error) {
@@ -172,7 +172,7 @@ export const updateProductController = async (req, res) => {
     res.status(500).send({
       success: false,
       error,
-      message: "Error al actualizar el producto",
+      message: "Error in Updte product",
     });
   }
 };

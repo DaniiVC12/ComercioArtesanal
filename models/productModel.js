@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const productSchema = new mongoose.Schema(
   {
-    nombre: {
+    name: {
       type: String,
       required: true,
     },
@@ -10,32 +10,32 @@ const productSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    descripcion: {
+    description: {
       type: String,
       required: true,
     },
-    precio: {
+    price: {
       type: Number,
       required: true,
     },
-    categoria: {
+    category: {
       type: mongoose.ObjectId,
       ref: "Categoria",
       required: true,
     },
-    cantidad: {
+    quantity: {
       type: Number,
       required: true,
     },
-    imagen: {
+    photo: {
       data: Buffer,
       contentType: String,
     },
-    envio: {
+    shipping: {
       type: Boolean,
     },
   },
   { timestamps: true }
 );
 
-export default mongoose.model("Product", productSchema);
+export default mongoose.model("Productos", productSchema);
