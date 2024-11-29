@@ -4,6 +4,8 @@ import dotenv from "dotenv";
 import morgan from "morgan";
 import connectDB from "./config/db.js"; //importar funcion
 import authRoutes from "./rutas/authRoute.js"
+import categoryRoutes from './rutas/categoryRoutes.js'
+import productRoutes from './rutas/productRoutes.js'
 import cors from 'cors';
 import path from 'path';
 import { fileURLToPath } from "url";
@@ -42,6 +44,8 @@ app.use(express.static(path.join(__dirname, './client/build')));
 
 //routes
 app.use("/api/v1/auth", authRoutes);
+app.use("/api/v1/category", categoryRoutes);
+app.use("/api/v1/product", productRoutes);
 
 //rest api
 app.use("*", function(req, res) {
