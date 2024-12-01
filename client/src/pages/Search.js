@@ -11,7 +11,7 @@ const Search = () => {
           <h6>
             {values?.results.length < 1
               ? "No se encontraron productos"
-              : `Found ${values?.results.length}`}
+              : `Resultados ${values?.results.length}`}
           </h6>
           <div className="d-flex flex-wrap mt-4">
             {values?.results.map((p) => (
