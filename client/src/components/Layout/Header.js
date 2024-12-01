@@ -3,6 +3,7 @@ import { NavLink, Link } from 'react-router-dom';
 import { MdLocalGroceryStore } from 'react-icons/md';
 import { useAuth } from '../../context/auth';
 import toast from "react-hot-toast";
+import SearchInput from '../Form/SearchInput';
 
 // se maneja la navegación en la aplicación, mostrando diferentes enlaces
 const Header = () => {
@@ -36,6 +37,7 @@ const Header = () => {
               <MdLocalGroceryStore /> ALFA DESIGN
             </Link>
             <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
+                <SearchInput/>
               <li className="nav-item">
                 <NavLink to="/" className="nav-link">Inicio</NavLink>
               </li>

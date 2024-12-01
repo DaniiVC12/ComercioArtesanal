@@ -99,7 +99,7 @@ const HomePage = () => {
     }
   };
   return (
-    <Layout title={"ALl Products - Best offers "}>
+    <Layout title={"Todos los productos - Mejores ofertas "}>
       <div className="container-fluid row mt-3">
         <div className="col-md-2">
           <h4 className="text-center">Filtrar por categoria</h4>
@@ -164,7 +164,7 @@ const HomePage = () => {
                   setPage(page + 1);
                 }}
               >
-                {loading ? "Cargando ..." : "Loadmore"}
+                {loading ? "Cargando ..." : "Ver más"}
               </button>
             )}
           </div>
