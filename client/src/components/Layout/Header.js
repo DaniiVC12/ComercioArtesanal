@@ -1,25 +1,28 @@
-import React from 'react';
-import { NavLink, Link } from 'react-router-dom';
-import { MdLocalGroceryStore } from 'react-icons/md';
-import { useAuth } from '../../context/auth';
+import React from "react";
+import { NavLink, Link } from "react-router-dom";
+import { useAuth } from "../../context/auth";
 import toast from "react-hot-toast";
-import SearchInput from '../Form/SearchInput';
+import SearchInput from "../Form/SearchInput";
+import useCategory from "../../hooks/useCategory";
+import { useCart } from "../../context/cart";
+import { Badge } from "antd";
 
-// se maneja la navegación en la aplicación, mostrando diferentes enlaces
 const Header = () => {
   const [auth, setAuth] = useAuth();
+  const [cart] = useCart();
+  const categories = useCategory();
   const handleLogout = () => {
     setAuth({
-      ...auth, user: null, token: ''
+      ...auth,
+      user: null,
+      token: "",
     });
-    localStorage.removeItem('auth');
-    toast.success('Vuelva a iniciar sesión');
+    localStorage.removeItem("auth");
+    toast.success("Se cerro la sesion");
   };
-
   return (
-    // barra de navegacion
     <>
-      <nav className="navbar navbar-expand-lg bg-body-tertiary">
+      <nav className="navbar navbar-expand-lg bg-body-tertiary fixed-top">
         <div className="container-fluid">
           <button
             className="navbar-toggler"
@@ -34,57 +37,97 @@ const Header = () => {
           </button>
           <div className="collapse navbar-collapse" id="navbarTogglerDemo01">
             <Link to="/" className="navbar-brand">
-              <MdLocalGroceryStore /> ALFA DESIGN
+              🛒 ALFA DESIGN
             </Link>
             <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
-                <SearchInput/>
+              <SearchInput />
               <li className="nav-item">
-                <NavLink to="/" className="nav-link">Inicio</NavLink>
+                <NavLink to="/" className="nav-link ">
+                  INICIO
+                </NavLink>
               </li>
-              <li className="nav-item">
-                <NavLink to="/category" className="nav-link">CATEGORIAS</NavLink>
-              </li>
-              {
-                !auth.user ? (
-                  <>
-                    <li className="nav-item">
-                      <NavLink to="/register" className="nav-link">REGISTRARSE</NavLink>
-                    </li>
-                    <li className="nav-item">
-                      <NavLink to="/login" className="nav-link">LOGIN</NavLink>
-                    </li>
-                  </>
-                ) : (
-                  <>
-                    <li className="nav-item dropdown">
-                      <NavLink
-                        className="nav-link dropdown-toggle"
-                        href="#"
-                        role="button"
-                        data-bs-toggle="dropdown"
-                        style={{ border: "none" }}
+              <li className="nav-item dropdown">
+                <Link
+                  className="nav-link dropdown-toggle"
+                  to={"/categories"}
+                  data-bs-toggle="dropdown"
+                >
+                  CATEGORIAS
+                </Link>
+                <ul className="dropdown-menu">
+                  <li>
+                    <Link className="dropdown-item" to={"/categories"}>
+                      Todas las categorias
+                    </Link>
+                  </li>
+                  {categories?.map((c) => (
+                    <li>
+                      <Link
+                        className="dropdown-item"
+                        to={`/category/${c.slug}`}
                       >
-                        {auth?.user?.name}
-                      </NavLink>
-                      <ul className="dropdown-menu">
-                        <li>
-                          <NavLink
-                            to={`/dashboard/${auth?.user?.role === 1 ? "admin" : "user"}`}
-                            className="dropdown-item"
-                          >
-                            Dashboard
-                          </NavLink>
-                        </li>
-                        <li className="nav-item">
-                          <NavLink onClick={handleLogout} to="/login" className="nav-link">SALIR</NavLink>
-                        </li>
-                      </ul>
+                        {c.name}
+                      </Link>
                     </li>
-                  </>
-                )
-              }
+                  ))}
+                </ul>
+              </li>
+
+              {!auth?.user ? (
+                <>
+                  <li className="nav-item">
+                    <NavLink to="/register" className="nav-link">
+                      REGISTRARSE
+                    </NavLink>
+                  </li>
+                  <li className="nav-item">
+                    <NavLink to="/login" className="nav-link">
+                      LOGIN
+                    </NavLink>
+                  </li>
+                </>
+              ) : (
+                <>
+                  <li className="nav-item dropdown">
+                    <NavLink
+                      className="nav-link dropdown-toggle"
+                      href="#"
+                      role="button"
+                      data-bs-toggle="dropdown"
+                      style={{ border: "none" }}
+                    >
+                      {auth?.user?.name}
+                    </NavLink>
+                    <ul className="dropdown-menu">
+                      <li>
+                        <NavLink
+                          to={`/dashboard/${
+                            auth?.user?.role === 1 ? "admin" : "user"
+                          }`}
+                          className="dropdown-item"
+                        >
+                          DASHBOARD
+                        </NavLink>
+                      </li>
+                      <li>
+                        <NavLink
+                          onClick={handleLogout}
+                          to="/login"
+                          className="dropdown-item"
+                        >
+                          SALIR
+                        </NavLink>
+                      </li>
+                    </ul>
+                  </li>
+                </>
+              )}
               <li className="nav-item">
-                <NavLink to="/cart" className="nav-link">CARRITO (0)</NavLink>
+                <NavLink to="/cart" className="nav-link">
+                  <Badge count={cart?.length} showZero offset={[10, -5]}>
+                    CARRITO
+                  </Badge>
+                </NavLink>
               </li>
             </ul>
           </div>
@@ -95,70 +138,3 @@ const Header = () => {
 };
 
 export default Header;
-
-
-
-
-/*
-import React from 'react';
-import {NavLink, Link} from 'react-router-dom';
-import {MdLocalGroceryStore} from 'react-icons/md';
-import { useAuth } from '../../context/auth';
-import toast from "react-hot-toast";
-
-//se maneja la navegación en la aplicación, mostrando diferentes enlaces
-const Header = () => {
-  const [auth, setAuth] = useAuth();
-  const handleLogout = () => {
-    setAuth({
-      ...auth, user:null, token:''
-    })
-    localStorage.removeItem('auth');
-    toast.success('Vuelva a iniciar sesion');
-  }
-  return (
-    //barra de navegacion
-    <>
-      <nav className="navbar navbar-expand-lg bg-body-tertiary">
-  <div className="container-fluid">
-    <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo01" aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
-      <span className="navbar-toggler-icon" />
-    </button>
-    <div className="collapse navbar-collapse" id="navbarTogglerDemo01">
-      <Link to="/" className="navbar-brand"> <MdLocalGroceryStore/> ALFA DESIGN</Link>
-      <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
-        <li className="nav-item">
-          <NavLink to="/" className="nav-link"  href="#">Inicio</NavLink>
-        </li>
-        <li className="nav-item">
-          <NavLink to="/category" className="nav-link" href="#">CATEGORIAS</NavLink>
-        </li>
-        {
-          !auth.user ? (<>
-          <li className="nav-item">
-          <NavLink to="/register" className="nav-link" href="#">REGISTRARSE</NavLink>
-        </li>
-        <li className="nav-item">
-          <NavLink to="/login" className="nav-link" href="#">LOGIN</NavLink>
-        </li>
-          </>) : (<>
-          
-
-            <li className="nav-item">
-          <NavLink onClick={handleLogout} to="/login" className="nav-link" href="#">SALIR</NavLink>
-        </li>
-          </>)
-        }
-        <li className="nav-item">
-          <NavLink to="/cart" className="nav-link" href="#">CARRITO (0) </NavLink>
-        </li>
-      </ul>
-    </div>
-  </div>
-</nav>
-
-    </>
-  );
-};
-
-export default Header; */

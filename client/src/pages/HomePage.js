@@ -1,11 +1,17 @@
 import React, { useState, useEffect } from "react";
-import Layout from "./../components/Layout/Layout";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import { Checkbox, Radio } from "antd";
 import { Prices } from "../components/Prices";
+import { useCart } from "../context/cart";
+import axios from "axios";
+import toast from "react-hot-toast";
+import Layout from "./../components/Layout/Layout";
+import { AiOutlineReload } from "react-icons/ai";
+import "../styles/Homepage.css";
+
 const HomePage = () => {
   const navigate = useNavigate();
+  const [cart, setCart] = useCart();
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [checked, setChecked] = useState([]);
@@ -101,9 +107,17 @@ const HomePage = () => {
     }
   };
   return (
-    <Layout title={"Todos los productos - Mejores ofertas "}>
-      <div className="container-fluid row mt-3">
-        <div className="col-md-2">
+    <Layout title={"TODOS LOS PRODUCTOS "}>
+      {/* banner image */}
+      <img
+        src="/images/banner.png"
+        className="banner-img"
+        alt="bannerimage"
+        width={"100%"}
+      />
+      {/* banner image */}
+      <div className="container-fluid row mt-3 home-page">
+        <div className="col-md-3 filters">
           <h4 className="text-center">Filtrar por categoria</h4>
           <div className="d-flex flex-column">
             {categories?.map((c) => (
@@ -131,33 +145,54 @@ const HomePage = () => {
               className="btn btn-danger"
               onClick={() => window.location.reload()}
             >
-              Resetear los filtros
+              ELIMINAR FILTROS
             </button>
           </div>
         </div>
-        <div className="col-md-9">
+        <div className="col-md-9 ">
           <h1 className="text-center">Todos los productos</h1>
           <div className="d-flex flex-wrap">
             {products?.map((p) => (
-              <div className="card m-2" style={{ width: "18rem" }}>
+              <div className="card m-2" key={p._id}>
                 <img
                   src={`http://localhost:5000/api/v1/product/product-photo/${p._id}`}
                   className="card-img-top"
                   alt={p.name}
                 />
                 <div className="card-body">
-                  <h5 className="card-title">{p.name}</h5>
-                  <p className="card-text">
-                    {p.description.substring(0, 30)}...
+                  <div className="card-name-price">
+                    <h5 className="card-title">{p.name}</h5>
+                    <h5 className="card-title card-price">
+                      {p.price.toLocaleString("en-US", {
+                        style: "currency",
+                        currency: "USD",
+                      })}
+                    </h5>
+                  </div>
+                  <p className="card-text ">
+                    {p.description.substring(0, 60)}...
                   </p>
-                  <p className="card-text"> $ {p.price}</p>
-                  <button
-                    className="btn btn-primary ms-1"
-                    onClick={() => navigate(`/product/${p.slug}`)}
-                  >
-                    Mas detalles
-                  </button>
-                  <button class="btn btn-secondary ms-1">Agregar al carrito</button>
+                  <div className="card-name-price">
+                    <button
+                      className="btn btn-info ms-1"
+                      onClick={() => navigate(`/product/${p.slug}`)}
+                    >
+                      Mas detalles
+                    </button>
+                    <button
+                      className="btn btn-dark ms-1"
+                      onClick={() => {
+                        setCart([...cart, p]);
+                        localStorage.setItem(
+                          "cart",
+                          JSON.stringify([...cart, p])
+                        );
+                        toast.success("Item añadido al carrito");
+                      }}
+                    >
+                      Agregar al carrito
+                    </button>
+                  </div>
                 </div>
               </div>
             ))}
@@ -165,13 +200,20 @@ const HomePage = () => {
           <div className="m-2 p-3">
             {products && products.length < total && (
               <button
-                className="btn btn-warning"
+                className="btn loadmore"
                 onClick={(e) => {
                   e.preventDefault();
                   setPage(page + 1);
                 }}
               >
-                {loading ? "Cargando ..." : "Ver más"}
+                {loading ? (
+                  "Cargando ..."
+                ) : (
+                  <>
+                    {" "}
+                    Ver Mas <AiOutlineReload />
+                  </>
+                )}
               </button>
             )}
           </div>
@@ -182,19 +224,3 @@ const HomePage = () => {
 };
 
 export default HomePage;
-
-/*import React from 'react';
-import Layout from './../components/Layout/Layout';
-import { useAuth } from '../context/auth';
-
-const HomePage = () => {
-  const [auth, setAuth] = useAuth();
-  return (
-    <Layout title={"ALFA DESIGN"}>
-        <h1>Inicio</h1>
-        <pre>{JSON.stringify(auth, null, 4)}</pre>
-    </Layout>
-  );
-};
-
-export default HomePage; */

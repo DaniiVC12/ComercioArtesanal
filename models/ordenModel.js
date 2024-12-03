@@ -5,7 +5,7 @@ const orderSchema = new mongoose.Schema(
     productos: [
       {
         type: mongoose.ObjectId,
-        ref: "Producto",
+        ref: "Productos",
       },
     ],
     pago: {},
@@ -16,7 +16,7 @@ const orderSchema = new mongoose.Schema(
     estado: {
       type: String,
       default: "NO PROCESADO",
-      enum: ["NO PROCESADO", "PROCESANDO", "ENVIADO", "ENTREGADO", "CANCELADO"],
+      enum: ["NO PROCESADO", "EN PROCESO", "ENVIADO", "ENTREGADO", "CANCELAR"],
     },
   },
   { timestamps: true }

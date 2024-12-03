@@ -7,17 +7,17 @@ const Search = () => {
     <Layout title={"Resultados de Busqueda"}>
       <div className="container">
         <div className="text-center">
-          <h1>Search Resuts</h1>
+          <h1>Resultados de Busqueda</h1>
           <h6>
             {values?.results.length < 1
               ? "No se encontraron productos"
-              : `Resultados ${values?.results.length}`}
+              : `Found ${values?.results.length}`}
           </h6>
           <div className="d-flex flex-wrap mt-4">
             {values?.results.map((p) => (
               <div className="card m-2" style={{ width: "18rem" }}>
                 <img
-                  src={`/api/v1/product/product-photo/${p._id}`}
+                  src={`http://localhost:5000/api/v1/product/product-photo/${p._id}`}
                   className="card-img-top"
                   alt={p.name}
                 />
