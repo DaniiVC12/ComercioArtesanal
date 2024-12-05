@@ -1,14 +1,16 @@
-import React from 'react';
-import { NavLink, Link } from 'react-router-dom';
-import { MdLocalGroceryStore } from 'react-icons/md';
-import { useAuth } from '../../context/auth';
+import React from "react";
+import { NavLink, Link } from "react-router-dom";
+import { useAuth } from "../../context/auth";
 import toast from "react-hot-toast";
-import SearchInput from '../Form/SearchInput';
+import SearchInput from "../Form/SearchInput";
 import useCategory from "../../hooks/useCategory";
+import { useCart } from "../../context/cart";
+import { Badge } from "antd";
 
 // se maneja la navegación en la aplicación, mostrando diferentes enlaces
 const Header = () => {
   const [auth, setAuth] = useAuth();
+  const [cart] = useCart();
   const categories = useCategory();
   const handleLogout = () => {
     setAuth({
@@ -100,9 +102,8 @@ const Header = () => {
                     <ul className="dropdown-menu">
                       <li>
                         <NavLink
-                          to={`/dashboard/${
-                            auth?.user?.role === 1 ? "admin" : "user"
-                          }`}
+                          to={`/dashboard/${auth?.user?.role === 1 ? "admin" : "user"
+                            }`}
                           className="dropdown-item"
                         >
                           Dashboard
@@ -122,9 +123,11 @@ const Header = () => {
                 </>
               )}
               <li className="nav-item">
-                <NavLink to="/cart" className="nav-link">
-                  Cart (0)
-                </NavLink>
+                <Badge count={cart?.length} showZero>
+                  <NavLink to="/cart" className="nav-link">
+                    Cart
+                  </NavLink>
+                </Badge>
               </li>
             </ul>
           </div>
